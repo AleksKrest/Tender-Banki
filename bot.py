@@ -1,4 +1,3 @@
-
 import os
 import time
 import requests
@@ -19,3 +18,4 @@ send_message("🦉 Бот мониторинга банковских тенде
 
 while True:
     time.sleep(180)
+
