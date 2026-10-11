@@ -1,0 +1,39 @@
+name: Проверка источников закупок
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Проверить сайты
+        run: |
+          python - <<'PY'
+          import urllib.request
+          import urllib.error
+
+          sites = {
+              "ЕИС": "https://zakupki.gov.ru/",
+              "ЕИС поиск": "https://zakupki.gov.ru/epz/order/extendedsearch/results.html",
+              "Альфа-Банк": "https://alfabank.ru/tenders/",
+              "ВТБ": "https://www.vtb.ru/",
+              "B2B-Center": "https://www.b2b-center.ru/"
+          }
+
+          for name, url in sites.items():
+              print(f"\nПроверяем: {name}", flush=True)
+              try:
+                  req = urllib.request.Request(
+                      url,
+                      headers={"User-Agent": "Mozilla/5.0"}
+                  )
+                  with urllib.request.urlopen(req, timeout=12) as r:
+                      print(f"HTTP {r.status}: доступен", flush=True)
+              except urllib.error.HTTPError as e:
+                  print(f"HTTP {e.code}: сервер ответил", flush=True)
+              except Exception as e:
+                  print(f"Ошибка: {type(e).__name__}: {e}", flush=True)
+
+          print("\nПроверка завершена", flush=True)
+          PY
